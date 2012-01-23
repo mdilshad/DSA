@@ -1,0 +1,31 @@
+#include<stdlib.h>
+typedef struct node
+{
+	int key,degree;
+	struct node *p,*child,*sibling;
+}Node;
+
+typedef struct heap
+{
+	Node *head;
+}Heap;
+Node * Binomial_Heap_Minimum(Heap *H)
+{
+	Node *x,*y=NULL;
+	int min=-9999999999;
+	x=H->head;
+	while(x!=NULL)
+	{
+		if(x->key < min)
+		{
+			min=x->key;
+			y=x;
+		}
+	}
+	return y;
+}
+void Binomial_Link(Node *x,Node *y)
+{
+	y->p = z;
+	y->sibling
+}

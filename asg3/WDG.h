@@ -1,0 +1,14 @@
+struct graph *create_graph(struct graph *);
+int insert_vertex(struct graph *,char);
+struct vertex * find_vertex(struct graph *, char);
+int insert_edge(struct graph *,char,char,int);
+int edge_delete(struct graph *,char,char);
+int vertex_delete(struct graph *,char);
+int find_edge(struct graph *,char,char);
+void show_edge(struct graph *);
+void DFS_visit(struct graph *,char,char *);
+void DFS(struct graph *);
+void option1(struct graph *,int);
+void vertex_detail(struct graph *,char);
+void matrix_rep(struct graph *);
+void free_graph(struct graph *);

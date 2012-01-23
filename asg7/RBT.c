@@ -1,0 +1,303 @@
+#include<stdlib.h>
+#include<stdio.h>
+enum colour{red,black};
+typedef struct rbt
+{
+	int key;
+	struct rbt *left,*right,*p;
+	enum colour color;
+}RBT;
+typedef struct root
+{
+	int item,height;
+	RBT *root;
+}ROOT;
+ROOT *Create_Tree()
+{
+	ROOT *T=malloc(sizeof(ROOT));
+	T->root=NULL;
+	T->item=T->height=0;
+}
+void Left_Rotate(ROOT *T,RBT *x)
+{
+	RBT *y=x->right;
+	x->right=y->left;
+	if(y->left!=NULL)
+		y->left->p=x;
+	y->p=x->p;
+	if(x->p==NULL)
+		T->root=y;
+	else if(x==x->p->left)
+		x->p->left=y;
+	else
+		x->p->right=y;
+	y->left=x;
+	x->p=y;
+}
+void Right_Rotate(ROOT *T,RBT *x)
+{
+	RBT *y=x->left;
+	x->left=y->right;
+	if(y->right!=NULL)
+		y->right->p=x;
+	y->p=x->p;
+	if(x->p==NULL)
+		T->root=y;
+	else if(x==x->p->right)
+		x->p->right=y;
+	else
+		x->p->left=y;
+	y->right=x;
+	x->p=y;
+}
+void RB_Insert_Fixup(ROOT *T,RBT *z)
+{
+	RBT *y;
+	while(z->p && z->p->p && z->p->color==red)
+	{
+		if(z->p==z->p->p->left)
+		{
+			y=z->p->p->right;
+			if(y && y->color==red)
+			{
+				z->p->color=black;
+				y->color=black;
+				z->p->p->color=red;
+				z=z->p->p;
+			}
+			else 
+			{
+				if(z==z->p->right)
+				{
+					z=z->p;
+					Left_Rotate(T,z);
+				}
+				z->p->color=black;
+				z->p->p->color=red;
+				Right_Rotate(T,z->p->p);
+			}	
+		}
+		else
+		{
+			y=z->p->p->left;
+			if(y && y->color==red)
+			{
+				z->p->color=black;
+				y->color=black;
+				z->p->p->color=red;
+				z=z->p->p;
+			}
+			else 
+			{
+				if(z==z->p->left)
+				{
+					z=z->p;
+					Right_Rotate(T,z);
+				}
+				z->p->color=black;
+				z->p->p->color=red;
+				Left_Rotate(T,z->p->p);
+			}	
+		}
+	}
+	T->root->color=black;
+}
+void RB_Insert(ROOT *T,RBT *z)
+{
+	RBT *x,*y=NULL;
+	x=T->root;
+	while(x!=NULL)
+	{
+		y=x;
+		if(z->key < x->key)
+			x=x->left;
+		else
+			x=x->right;
+	}
+	z->p=y;
+	if(y==NULL)
+	{
+		T->root=z;
+		z->color=black;
+	}
+	else if(z->key < y->key)
+		y->left=z;
+	else
+		y->right=z;
+	RB_Insert_Fixup(T,z);
+}
+void Insert(ROOT *T,int key)
+{
+	RBT *z=(RBT *)malloc(sizeof(RBT));
+	z->key=key;
+	z->left=z->right=NULL;
+	z->color=red;
+	T->item++;
+	RB_Insert(T,z);	
+}
+RBT *Tree_Minimum(RBT *x)
+{
+	while(x->left != NULL)
+		x=x->left;
+	return x;
+}
+RBT *Tree_Successor(RBT *x)
+{
+	if(x->right != NULL)
+		return Tree_Minimum(x->right);
+	RBT *y=x->p;
+	while(y!=NULL && x == y->right)
+	{
+		x=y;
+		y=y->p;
+	}
+	return y;
+}
+void RB_Delete_Fixup(ROOT *T,RBT *x)
+{
+	RBT *w;
+	while(x && x != T->root && x->color == black)
+	{
+		if(x == x->p->left)
+		{
+			w=x->p->left;
+			if(w && w->color == red)
+			{
+				w->color=black;
+				x->p->color=red;
+				Left_Rotate(T,x->p);
+				w=x->p->right;
+			}
+			if((w->left==NULL || w->left->color == black) && (w->right==NULL || w->right->color == black))
+			{
+				w->color=red;
+				x=x->p;
+			}
+			else if(w->right == NULL || w->right->color == black)
+			{
+				if(w->left)
+					w->left->color=black;
+				w->color=red;
+				Right_Rotate(T,w);
+				w=x->p->right;
+			}
+			if(x->p && w)
+			{
+				w->color=x->p->color;
+				x->p->color=black;
+			}
+			else if(w)
+				w->color=black;
+			w->right->color=black;
+			Left_Rotate(T,x->p);
+			x=T->root;
+		}
+		else
+		{
+			w=x->p->right;
+			if(w && w->color == red)
+			{
+				w->color=black;
+				x->p->color=red;
+				Right_Rotate(T,x->p);
+				w=x->p->left;
+			}
+			if((w->right == NULL || w->right->color == black) && (w->left == NULL || w->left->color == black))
+			{
+				w->color=red;
+				x=x->p;
+			}
+			else 
+			{
+				if(x->left == NULL && w->left->color == black)
+				{
+					w->right->color=black;
+					w->color=red;
+					Left_Rotate(T,w);
+					w=x->p->left;
+				}
+				if(x->p && w)
+				{
+					w->color=x->p->color;
+					x->p->color=black;
+				}
+				else if(w)
+					w->color=black;
+				w->left->color=black;
+				Right_Rotate(T,x->p);
+				x=T->root;
+			}
+		}
+	}
+	if(x)
+		x->color=black;
+}
+RBT *RB_Delete(ROOT *T,RBT *z)
+{
+	RBT *x,*y;
+	if(z->left == NULL || z->right == NULL)
+		y=z;
+	else
+		y=Tree_Successor(z);
+	if(y->left != NULL)
+		x=y->left;
+	else
+		x=y->right;
+	if(x != NULL)	
+		x->p=y->p;
+	if(y->p == NULL)
+		T->root=x;
+	else if(y == y->p->left)
+		y->p->left=x;
+	else
+		y->p->right=x;
+	if(y!=z)
+		z->key=y->key;
+	if(T->root && y->color==black)
+		RB_Delete_Fixup(T,x);
+	return y;
+}
+RBT *Search(ROOT *T,int key)
+{
+	RBT *x;
+	x=T->root;
+	while(x!=NULL)
+	{
+		if(key < x->key)
+			x=x->left;
+		else if(key > x->key)
+			x=x->right;
+		else
+			return x;
+	}
+	return x;
+}
+int Delete(ROOT *T,int key)
+{
+	RBT *z;
+	z=Search(T,key);
+	if(z)
+	{
+		free(RB_Delete(T,z));
+		return 1;
+	}
+	return 0;
+}
+int max(int a,int b)
+{
+	return a>b?a:b;
+}
+void Inorder(RBT *x)
+{
+	if(!x)
+		return;
+	Inorder(x->left);
+	printf("\t%d",x->key);
+	Inorder(x->right);
+}
+int Height(RBT *x)
+{
+	if(!x)
+		return 0;
+	return max(Height(x->left),Height(x->right))+1;
+}

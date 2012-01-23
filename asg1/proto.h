@@ -1,0 +1,11 @@
+int parent(int);
+int right(int);
+int left(int);
+void heapify(int *,int ,int);
+void build_heap(int *,int);
+void heap_sort(int *,int);
+void show(int *,int);
+int heap_extract_max(int *,int*);
+int maximum(int *);
+void heap_insert(int *,int,int*);
+void increase_key(int *,int,int);

@@ -1,0 +1,52 @@
+#include<stdio.h>
+#include<stdlib.h>
+typedef struct node
+{
+	int key,degree;
+	struct node *p,*child,*sibling;
+}Node;
+
+typedef struct heap
+{
+	Node *head;
+}Heap;
+int main()
+{
+	BTree *T;
+	T=(BTree *)Create_Tree();
+	int key;
+	int choice;
+	printf("Creation of B tree for node %d\n",M);
+	while(1)
+	{
+		printf("\n\n\t\t1.Insert\n\t\t2.Delete\n\t\t3.Search\n\t\t4.Display\n\t\t5.Quit\n\t\tEnter your choice : ");
+		scanf("%d",&choice);
+		switch(choice)
+		{
+			case 1:
+				printf("Enter the key : ");
+				scanf("%d",&key);
+				insert(T,key);
+				break;
+			case 2:
+				printf("Enter the key : ");
+				scanf("%d",&key);
+				DelNode(T,key);
+				break;
+			case 3:
+				printf("Enter the key : ");
+				scanf("%d",&key);
+				search(T,key);
+				break;
+			case 4:
+				printf("Btree is :\n");
+				display(T->root,0);
+				break;
+			case 5:
+				exit(1);
+			default:
+				printf("Wrong choice\n");
+		}
+	}
+	return 0;
+}
